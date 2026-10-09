@@ -23,14 +23,14 @@ with concurrent.futures.ThreadPoolExecutor() as pool:
 assert sorted(p.returncode == 0 for p in results) == [False,True], [p.stderr for p in results]
 assert sql("SELECT count(*) FROM profiles WHERE role='admin' AND active").stdout.strip() == '1'
 admin = sql("SELECT id FROM profiles WHERE role='admin' AND active").stdout.strip()
-order = sql(as_user(admin, f"SELECT create_order('{c}',now()+interval '1 day','', '[{{\"service_id\":\"{svc}\",\"quantity\":1}}]')")).stdout.splitlines()[-2]
+order = sql(as_user(admin, f"SELECT create_order('{c}',now()+interval '1 day','', '[{{\"service_id\":\"{svc}\",\"quantity\":1,\"expected_unit\":\"piece\",\"expected_price_minor\":1000}}]')")).stdout.splitlines()[-2]
 queries = [as_user(admin, f"SELECT record_payment('{order}',600,'cash',NULL,'{uuid.uuid4()}'); SELECT pg_sleep(0.2)") for _ in range(2)]
 with concurrent.futures.ThreadPoolExecutor() as pool:
     results = list(pool.map(lambda q: sql(q,False),queries))
 assert sorted(p.returncode == 0 for p in results)==[False,True], [p.stderr for p in results]
 assert sql(f"SELECT sum(amount_minor) FROM payments WHERE order_id='{order}'").stdout.strip()=='600'
 # Cancellation must serialize with payment and leave one consistent outcome.
-order2 = sql(as_user(admin, f"SELECT create_order('{c}',now()+interval '1 day','', '[{{\"service_id\":\"{svc}\",\"quantity\":1}}]')")).stdout.splitlines()[-2]
+order2 = sql(as_user(admin, f"SELECT create_order('{c}',now()+interval '1 day','', '[{{\"service_id\":\"{svc}\",\"quantity\":1,\"expected_unit\":\"piece\",\"expected_price_minor\":1000}}]')")).stdout.splitlines()[-2]
 queries=[as_user(admin,f"SELECT change_order_status('{order2}','received','cancelled'); SELECT pg_sleep(0.3)"),as_user(admin,f"SELECT pg_sleep(0.1); SELECT record_payment('{order2}',500,'cash',NULL,'{uuid.uuid4()}')")]
 with concurrent.futures.ThreadPoolExecutor() as pool:
     results=list(pool.map(lambda q:sql(q,False),queries))

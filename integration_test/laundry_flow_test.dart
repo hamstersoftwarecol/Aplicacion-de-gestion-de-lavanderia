@@ -61,7 +61,12 @@ void main() {
         dueAt: DateTime.now().add(const Duration(days: 1)),
         notes: 'Prueba automatizada de desarrollo',
         items: [
-          {'service_id': service['id'], 'quantity': 2},
+          {
+            'service_id': service['id'],
+            'quantity': 2,
+            'expected_unit': service['unit'],
+            'expected_price_minor': service['price_minor'],
+          },
         ],
       );
       await employee.pay(

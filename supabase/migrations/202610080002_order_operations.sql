@@ -10,6 +10,9 @@ begin
  for item in select value from jsonb_array_elements(p_items) loop
   select * into svc from public.services where id=(item->>'service_id')::uuid and active for share;
   if not found then raise check_violation using message='Servicio no disponible'; end if;
+  if item->>'expected_unit' is distinct from svc.unit or item->>'expected_price_minor' is distinct from svc.price_minor::text then
+   raise check_violation using message='El precio o la unidad cambiaron. Quita y agrega el servicio para revisar el pedido.';
+  end if;
   if coalesce(item->>'quantity','') !~ '^[0-9]+$' then raise check_violation using message='Cantidad inválida'; end if;
   qty:=(item->>'quantity')::bigint;
   if qty<1 or qty>1000000 then raise check_violation using message='Cantidad fuera de rango'; end if;

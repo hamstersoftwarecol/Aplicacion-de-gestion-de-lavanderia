@@ -8,7 +8,7 @@ set local request.jwt.claim.sub='00000000-0000-0000-0000-000000000001';
 insert into clients(id,name,phone) values ('10000000-0000-0000-0000-000000000001','Cliente','123');
 insert into services(id,name,unit,price_minor) values ('20000000-0000-0000-0000-000000000001','Lavado','kilogram',1001);
 do $$ declare oid uuid; pid uuid; pid2 uuid; n int; begin
- oid:=create_order('10000000-0000-0000-0000-000000000001',now()+interval '1 day','', '[{"service_id":"20000000-0000-0000-0000-000000000001","quantity":1500}]');
+ oid:=create_order('10000000-0000-0000-0000-000000000001',now()+interval '1 day','', '[{"service_id":"20000000-0000-0000-0000-000000000001","quantity":1500,"expected_unit":"kilogram","expected_price_minor":1001}]');
  perform pg_temp.assert_true((select total_minor=1502 from orders where id=oid),'half up server total');
  update services set price_minor=9999;
  perform pg_temp.assert_true((select price_minor=1001 from order_items where order_id=oid),'historical price');
@@ -29,9 +29,9 @@ do $$ declare oid uuid; pid uuid; pid2 uuid; n int; begin
  perform change_order_status(oid,'ready','delivered');
  perform pg_temp.assert_true((select count(*)=4 from order_events where order_id=oid),'all status events');
  n:=(select count(*) from orders);
- begin perform create_order('10000000-0000-0000-0000-000000000001',now()-interval '1 day','', '[{"service_id":"20000000-0000-0000-0000-000000000001","quantity":1}]'); raise exception 'FAIL: past date'; exception when check_violation then null; end;
+ begin perform create_order('10000000-0000-0000-0000-000000000001',now()-interval '1 day','', '[{"service_id":"20000000-0000-0000-0000-000000000001","quantity":1,"expected_unit":"kilogram","expected_price_minor":1001}]'); raise exception 'FAIL: past date'; exception when check_violation then null; end;
  update services set active=false;
- begin perform create_order('10000000-0000-0000-0000-000000000001',now()+interval '1 day','', '[{"service_id":"20000000-0000-0000-0000-000000000001","quantity":1}]'); raise exception 'FAIL: inactive service'; exception when check_violation then null; end;
+ begin perform create_order('10000000-0000-0000-0000-000000000001',now()+interval '1 day','', '[{"service_id":"20000000-0000-0000-0000-000000000001","quantity":1,"expected_unit":"kilogram","expected_price_minor":1001}]'); raise exception 'FAIL: inactive service'; exception when check_violation then null; end;
  perform pg_temp.assert_true((select count(*)=n from orders),'failed creation atomic');
 end $$;
 rollback;

@@ -123,15 +123,27 @@ class SupabaseLaundryRepository extends LaundryRepository {
     if (!{'clients', 'services'}.contains(table)) {
       throw ArgumentError('Tabla no editable');
     }
-    if (id == null) {
-      await client.from(table).insert(values).select('id').single();
-    } else {
-      await client
-          .from(table)
-          .update(values)
-          .eq('id', id)
-          .select('id')
-          .single();
+    try {
+      if (id == null) {
+        await client.from(table).insert(values).select('id').single();
+      } else {
+        await client
+            .from(table)
+            .update(values)
+            .eq('id', id)
+            .select('id')
+            .single();
+      }
+      await profile();
+    } on PostgrestException catch (error) {
+      if (['PGRST301', 'PGRST302', 'PGRST303'].contains(error.code)) {
+        throw const AccessDenied();
+      }
+      if (['42501', 'PGRST116'].contains(error.code)) {
+        // RLS may hide the row if access was revoked after the initial check.
+        await profile();
+      }
+      rethrow;
     }
   }
 

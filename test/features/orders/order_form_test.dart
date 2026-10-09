@@ -33,6 +33,8 @@ void main() {
       await tester.tap(find.widgetWithText(FilledButton, 'Crear pedido'));
       await tester.pumpAndSettle();
       expect(repo.rows['orders']!.length, 1);
+      expect(repo.lastOrderItems!.single['expected_unit'], 'piece');
+      expect(repo.lastOrderItems!.single['expected_price_minor'], 100000);
     },
   );
 }

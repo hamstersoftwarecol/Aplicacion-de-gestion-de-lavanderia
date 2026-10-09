@@ -17,7 +17,7 @@ class LaundryApp extends StatefulWidget {
 }
 
 class _LaundryAppState extends State<LaundryApp> with WidgetsBindingObserver {
-  final _navigator = GlobalKey<NavigatorState>();
+  var _navigator = GlobalKey<NavigatorState>();
   StaffSession? _staff;
   bool _loading = true, _denied = false;
   String? _error;
@@ -52,10 +52,7 @@ class _LaundryAppState extends State<LaundryApp> with WidgetsBindingObserver {
     final token = ++_generation, repo = widget.repository;
     if (repo == null || !repo.hasSession) {
       if (mounted) {
-        setState(() {
-          _staff = null;
-          _loading = false;
-        });
+        _clearSession(denied: false);
       }
       return;
     }
@@ -63,6 +60,10 @@ class _LaundryAppState extends State<LaundryApp> with WidgetsBindingObserver {
       final staff = await repo.profile();
       if (mounted && token == _generation) {
         setState(() {
+          if (_staff != null && _staff!.role != staff.role) {
+            _navigator = GlobalKey<NavigatorState>();
+            _section = 0;
+          }
           _staff = staff;
           _loading = false;
           _denied = false;
@@ -73,6 +74,10 @@ class _LaundryAppState extends State<LaundryApp> with WidgetsBindingObserver {
     } on AccessDenied {
       if (mounted && token == _generation) _deny();
     } catch (e) {
+      if (mounted && token == _generation && isAccessError(e)) {
+        _deny();
+        return;
+      }
       if (mounted && token == _generation && !background) {
         setState(() {
           _loading = false;
@@ -82,26 +87,27 @@ class _LaundryAppState extends State<LaundryApp> with WidgetsBindingObserver {
     }
   }
 
-  void _deny() {
+  void _clearSession({required bool denied}) {
     _generation++;
-    _navigator.currentState?.popUntil((r) => r.isFirst);
     setState(() {
+      // Replacing the navigator disposes all protected routes, including busy
+      // dialogs whose PopScope intentionally blocks ordinary back navigation.
+      _navigator = GlobalKey<NavigatorState>();
       _staff = null;
-      _denied = true;
+      _denied = denied;
       _loading = false;
+      _error = null;
+      _section = 0;
     });
   }
+
+  void _deny() => _clearSession(denied: true);
 
   Future<void> _logout() async {
     try {
       await widget.repository!.signOut();
       if (mounted) {
-        _navigator.currentState?.popUntil((r) => r.isFirst);
-        setState(() {
-          _staff = null;
-          _denied = false;
-          _error = null;
-        });
+        _clearSession(denied: false);
       }
     } catch (_) {
       if (mounted) {

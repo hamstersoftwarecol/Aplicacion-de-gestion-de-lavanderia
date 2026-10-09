@@ -317,7 +317,7 @@ class _EntityDialogState extends State<_EntityDialog> {
     } catch (e) {
       if (mounted) {
         setState(() => _error = errorText(e));
-        if (e is AccessDenied) reportProblem(context, e);
+        if (isAccessError(e)) reportProblem(context, e);
       }
     } finally {
       if (mounted) setState(() => _busy = false);

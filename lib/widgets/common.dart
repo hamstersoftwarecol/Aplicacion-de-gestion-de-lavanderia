@@ -20,12 +20,13 @@ String errorText(Object error) {
   return 'No se pudo guardar o cargar la información. Revisa la conexión e inténtalo de nuevo.';
 }
 
+bool isAccessError(Object error) =>
+    error is AccessDenied ||
+    error is AuthException ||
+    (error is PostgrestException &&
+        ['42501', 'PGRST301', 'PGRST302', 'PGRST303'].contains(error.code));
 void reportProblem(BuildContext context, Object error) {
-  final denied =
-      error is AccessDenied ||
-      (error is PostgrestException &&
-          ['42501', 'PGRST301', 'PGRST303'].contains(error.code));
-  if (denied) {
+  if (isAccessError(error)) {
     final scope = context.getInheritedWidgetOfExactType<SessionScope>();
     if (scope != null) {
       scope.onDenied();

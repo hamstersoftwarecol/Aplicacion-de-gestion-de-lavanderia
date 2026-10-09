@@ -116,7 +116,12 @@ class _OrderFormState extends State<OrderForm> {
         notes: _notes.text.trim(),
         items: [
           for (final l in _lines)
-            {'service_id': l['service_id'], 'quantity': l['quantity']},
+            {
+              'service_id': l['service_id'],
+              'quantity': l['quantity'],
+              'expected_unit': l['unit'],
+              'expected_price_minor': l['price_minor'],
+            },
         ],
       );
       if (mounted) Navigator.pop(context, id);
@@ -396,6 +401,7 @@ class _QuantityState extends State<_QuantityDialog> {
             'service_name': widget.service['name'],
             'unit': widget.service['unit'],
             'quantity': qty,
+            'price_minor': widget.service['price_minor'],
             'display_quantity': _quantity.text,
             'subtotal_minor': lineSubtotal(
               priceMinor: widget.service['price_minor'],

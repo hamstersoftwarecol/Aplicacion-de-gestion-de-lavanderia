@@ -62,7 +62,7 @@
 
 **Files:** crear `supabase/migrations/202610080002_order_operations.sql`, `supabase/tests/orders_test.sql`, `supabase/tests/payment_concurrency.sh`.
 
-**Interfaces:** RPC `create_order(p_client_id uuid, p_due_at timestamptz, p_notes text, p_items jsonb) returns uuid`, cada elemento contiene `service_id` y `quantity`; `record_payment(p_order_id uuid, p_amount_minor bigint, p_method text, p_reference text, p_idempotency_key uuid) returns uuid`; `change_order_status(p_order_id uuid, p_expected_status text, p_next_status text) returns void`. Usar estados y unidades en inglés definidos en tareas 1–2; textos españoles solo en presentación.
+**Interfaces:** RPC `create_order(p_client_id uuid, p_due_at timestamptz, p_notes text, p_items jsonb) returns uuid`, cada elemento contiene `service_id`, `quantity`, `expected_unit` y `expected_price_minor` (verificación añadida en revisión para rechazar cambios concurrentes del catálogo); `record_payment(p_order_id uuid, p_amount_minor bigint, p_method text, p_reference text, p_idempotency_key uuid) returns uuid`; `change_order_status(p_order_id uuid, p_expected_status text, p_next_status text) returns void`. Usar estados y unidades en inglés definidos en tareas 1–2; textos españoles solo en presentación.
 
 - [ ] Escribir pruebas SQL: creación con cliente/servicio inactivo falla sin dejar filas; subtotales históricos permanecen al cambiar catálogo; fecha anterior falla; transiciones ilegales y entrega con deuda fallan. Dos llamadas idénticas con clave de pago común devuelven el mismo UUID y una sola fila; reutilizar clave con importe o pedido diferente falla. Rechazar pagos no positivos, sobrepagos y pagos a cancelados.
 - [ ] Ejecutar `supabase test db` y confirmar que faltan las funciones objetivo.

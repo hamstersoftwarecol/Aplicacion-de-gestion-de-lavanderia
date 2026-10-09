@@ -2,6 +2,7 @@ import 'package:lavanderia/data/laundry_repository.dart';
 
 class FakeRepository extends LaundryRepository {
   bool failSave = false;
+  List<JsonRow>? lastOrderItems;
   int paymentsMade = 0;
   String? lastPaymentKey;
   final rows = <String, List<JsonRow>>{
@@ -62,6 +63,7 @@ class FakeRepository extends LaundryRepository {
     required String notes,
     required List<JsonRow> items,
   }) async {
+    lastOrderItems = items;
     rows['orders']!.add({
       'id': 'o1',
       'number': 1,

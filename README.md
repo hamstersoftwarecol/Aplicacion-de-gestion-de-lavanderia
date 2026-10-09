@@ -78,3 +78,9 @@ flutter drive --driver=test_driver/integration_test.dart \
 Sin la bandera la prueba se omite explícitamente. Las pruebas normales `flutter test` usan repositorios de prueba para los widgets y no afirman validar el servicio remoto.
 
 En este entorno cloud, antes de usar Flutter ejecuta `source scripts/flutter_env.sh`. Redirige cachés y estado del analizador a rutas escribibles, sin modificar HOME. Flutter 3.44.0 está preparado en `/workspace/toolchains/flutter`.
+
+Los borradores de pedido incluyen el precio y la unidad que vio el operador. Si otro administrador cambia el catálogo antes de confirmar, el servidor rechaza el pedido sin guardar filas; quita y agrega el servicio para revisar el nuevo importe.
+
+## Validación realizada
+
+15 pruebas Flutter aprobadas, análisis estático sin incidencias, compilación web correcta y pruebas SQL de permisos, importes, estados y concurrencia aprobadas. Se comprobó el arranque de la pantalla de conexión en Chromium con las fuentes incluidas localmente. La integración autenticada con Supabase remoto y la publicación siguen pendientes. Consulta `docs/IMPLEMENTATION.md` para decisiones y límites de la validación.
