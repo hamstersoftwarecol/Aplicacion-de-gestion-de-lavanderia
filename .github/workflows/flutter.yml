@@ -9,6 +9,7 @@ jobs:
         with:
           flutter-version: '3.44.0'
           cache: true
+      - run: python3 -m unittest discover -s tests -v
       - run: flutter pub get --enforce-lockfile
       - run: flutter analyze
       - run: flutter test

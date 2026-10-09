@@ -1,6 +1,6 @@
 # Estado de implementación
 
-Primera versión de Flutter Web implementada en español: clientes, servicios, pedidos, estados, abonos manuales, historial, panel y roles. PostgreSQL/Supabase impone RLS y operaciones transaccionales. El código usa el checkout cloud existente y permanece en la rama local `work`.
+Primera versión de Flutter Web implementada en español: clientes, servicios, pedidos, estados, abonos manuales, historial, panel y roles. PostgreSQL/Supabase impone RLS y operaciones transaccionales. El código usa el checkout cloud existente y está publicado en la rama `main` de GitHub.
 
 ## Evidencia y límites
 
@@ -14,7 +14,7 @@ Primera versión de Flutter Web implementada en español: clientes, servicios, p
 
 ## Revisión independiente
 
-Tres hallazgos importantes, corregidos con regresiones que fallaron antes del cambio: rutas protegidas abiertas después de cerrar sesión, errores de autorización que conservaban el editor y cambios concurrentes de catálogo que reinterpretan cantidades/precios. No quedaron hallazgos menores aplazados de esa revisión. No se han fusionado ni subido commits a GitHub.
+Tres hallazgos importantes, corregidos con regresiones que fallaron antes del cambio: rutas protegidas abiertas después de cerrar sesión, errores de autorización que conservaban el editor y cambios concurrentes de catálogo que reinterpretan cantidades/precios. No quedaron hallazgos menores aplazados de esa revisión. Los commits de implementación y correcciones se subieron a `main` por petición del propietario.
 
 ## Decisiones de ejecución y límites asociados
 
@@ -34,3 +34,7 @@ Tres hallazgos importantes, corregidos con regresiones que fallaron antes del ca
 - Final: Ruling: Reviewer excluded toolchain provenance, test adapter/framework, repository factoring and fixed time offset from code review — retain prior documented choices and their limitations — local SQL evidence does not replace hosted Supabase validation.
 
 - Ruling: Incluir Roboto y CupertinoIcons en los assets — el motor Flutter intentaba descargar la fuente principal y avisaba de iconos ausentes — aumenta ligeramente el tamaño del bundle, conserva licencias y evita depender del CDN para el arranque verificado.
+
+## Preparación de publicación
+
+Flujo manual para GitHub Pages, validación de claves públicas y guía en `docs/DEPLOYMENT.md`. GitHub denegó la activación de Pages mediante la integración (HTTP 403); el propietario debe seleccionar GitHub Actions en Settings → Pages. Supabase sigue sin existir y no se ha ejecutado una publicación pública de la aplicación.

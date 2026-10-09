@@ -61,7 +61,7 @@ Los pedidos avanzan recibido → en proceso → listo → entregado; entrega exi
 flutter build web --dart-define-from-file=/ruta/config-publica.json
 ```
 
-Publicar `build/web` requiere un alojamiento HTTPS elegido por el propietario. No se ha publicado ningún sitio ni creado servicios externos automáticamente. Los procesos de desarrollo no sobreviven a una restauración cloud: iniciar de nuevo siguiendo los comandos anteriores, usando el checkout existente sin crear otro worktree.
+El repositorio incluye la automatización para alojar la aplicación en GitHub Pages mediante el flujo manual `Publish web application`. Sigue [la guía de conexión y despliegue](docs/DEPLOYMENT.md). Aún falta activar Pages, crear/configurar Supabase y ejecutar la publicación; no hay una aplicación pública desplegada. Los procesos de desarrollo no sobreviven a una restauración cloud: iniciar de nuevo siguiendo los comandos anteriores, usando el checkout existente sin crear otro worktree.
 
 ## Integración con Supabase real (pendiente hasta configurar el proyecto)
 

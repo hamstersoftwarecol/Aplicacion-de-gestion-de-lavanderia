@@ -10,3 +10,6 @@ build/
 *test-config.json
 supabase/.temp/
 supabase/.branches/
+
+__pycache__/
+*.pyc
